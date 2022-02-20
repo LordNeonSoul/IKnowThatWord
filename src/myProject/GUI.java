@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 public class GUI extends JFrame {
 
     private Header headerProject;
+    ModelIKnowThatWord modelIKnowThatWord;
     private JTextField userName;
     private JButton yes,no, help, exit, continueButton, register;
     private JPanel gamePanel, dataPanel;
@@ -165,7 +166,21 @@ public class GUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if(e.getSource()==register){
-
+                if(!userName.getText().equals("")) {
+                    if(flag==0){
+                        modelIKnowThatWord = new ModelIKnowThatWord(userName.getText());
+                        gamePanel.remove(userName);
+                        gamePanel.remove(register);
+                        if(modelIKnowThatWord.verifyUser){
+                            start.setText("Welcome " + userName.getText() + " to the game I Know that word!");
+                        }else{
+                            start.setText("Welcome back " + userName.getText() + " to the game I know that word!\nYou have reached the " + modelIKnowThatWord.getPassedLevels() + " level, let's continue");
+                        }
+                    }
+                    gamePanel.remove(register);
+                    gamePanel.remove(userName);
+                    timer.start();
+                }
             }
         }
     }

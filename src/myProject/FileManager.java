@@ -77,4 +77,25 @@ public class FileManager {
             }
         }
     }
+
+    public void writeLevel(int newLevel, int position){
+        try {
+            ArrayList<String> levels = usersReader();
+            position++;
+            String actualLevel = levels.get(position);
+            String newLevelUser = actualLevel.substring(0,actualLevel.lastIndexOf("-")+1) + newLevel;
+            levels.remove(position);
+            levels.add(position,newLevelUser);
+            fileWriter = new FileWriter(PATH_USERS,false);
+            output = new BufferedWriter(fileWriter);
+            for (int i=0; i<levels.size();i++){
+                output.write(levels.get(i));
+                output.newLine();
+            }
+            output.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
