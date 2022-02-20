@@ -2,6 +2,8 @@ package myProject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * This class is used for ...
@@ -11,6 +13,14 @@ import java.awt.*;
 public class GUI extends JFrame {
 
     private Header headerProject;
+    private JTextField userName;
+    private JButton yes,no, help, exit, continueButton, register;
+    private JPanel gamePanel, dataPanel;
+    private JTextArea data, level, start, word, time, hits;
+    private Escucha escucha;
+    private Timer timer, tempo;
+    private int seconds, interf, flag, hitsLevel, hitsWonLevel;
+    private boolean info;
 
     /**
      * Constructor of GUI class
@@ -19,9 +29,8 @@ public class GUI extends JFrame {
         initGUI();
 
         //Default JFrame configuration
-        this.setTitle("The Title app");
-        this.setSize(600,550);
-        //this.pack();
+        this.setTitle("I know that word");
+        this.pack();
         this.setResizable(true);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
@@ -34,11 +43,107 @@ public class GUI extends JFrame {
      */
     private void initGUI() {
         //Set up JFrame Container's Layout
+        this.getContentPane().setLayout(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
         //Create Listener Object and Control Object
+        escucha = new Escucha();
         //Set up JComponents
-        headerProject = new Header("Header ...", Color.BLACK);
 
-        this.add(headerProject,BorderLayout.NORTH); //Change this line if you change JFrame Container's Layout
+        data = new JTextArea(1, 2);
+        start = new JTextArea(1, 2);
+        time = new JTextArea(1, 2);
+        hits = new JTextArea(1, 2);
+
+        interf=1;
+        flag=0;
+        info=false;
+
+        headerProject = new Header("I Know That Word!", Color.BLACK);
+        constraints.gridx=0;
+        constraints.gridy=0;
+        constraints.gridwidth=3;
+        constraints.fill=GridBagConstraints.HORIZONTAL;
+        this.add(headerProject,constraints);
+
+        help = new JButton("?");
+        help.addActionListener(escucha);
+        constraints.gridx=0;
+        constraints.gridy=1;
+        constraints.gridwidth=1;
+        constraints.fill=GridBagConstraints.NONE;
+        constraints.anchor=GridBagConstraints.LINE_START;
+        this.add(help,constraints);
+
+        exit = new JButton("Exit");
+        exit.addActionListener(escucha);
+        constraints.gridx=2;
+        constraints.gridy=1;
+        constraints.gridwidth=1;
+        constraints.fill=GridBagConstraints.NONE;
+        constraints.anchor=GridBagConstraints.LINE_END;
+        this.add(exit,constraints);
+
+        gamePanel = new JPanel();
+        gamePanel.setPreferredSize(new Dimension(500,220));
+        gamePanel.setBorder(BorderFactory.createTitledBorder("Your words"));
+        constraints.gridx=1;
+        constraints.gridy=2;
+        constraints.gridwidth=1;
+        constraints.fill=GridBagConstraints.BOTH;
+        constraints.anchor=GridBagConstraints.CENTER;
+        add(gamePanel,constraints);
+
+        dataPanel = new JPanel();
+        dataPanel.setPreferredSize(new Dimension(500,100));
+        dataPanel.setBorder(BorderFactory.createTitledBorder("Your data"));
+        constraints.gridx=1;
+        constraints.gridy=3;
+        constraints.gridwidth=1;
+        constraints.fill=GridBagConstraints.BOTH;
+        constraints.anchor=GridBagConstraints.CENTER;
+        add(dataPanel,constraints);
+
+        userName = new JTextField();
+        userName.setPreferredSize(new Dimension(250, 20));
+        constraints.gridx=1;
+        constraints.gridy=3;
+        constraints.gridwidth=1;
+        constraints.fill=GridBagConstraints.BOTH;
+        constraints.anchor=GridBagConstraints.CENTER;
+        add(userName,constraints);
+        gamePanel.add(userName);
+
+        start.setText("Into an User or create one");
+        start.setBackground(null);
+        start.setEditable(false);
+        constraints.gridx=1;
+        constraints.gridy=3;
+        constraints.gridwidth=1;
+        constraints.anchor=GridBagConstraints.LINE_START;
+        add(start,constraints);
+        dataPanel.add(start);
+
+        register = new JButton("Register");
+        constraints.gridx=2;
+        constraints.gridy=1;
+        constraints.gridwidth=1;
+        constraints.fill=GridBagConstraints.NONE;
+        constraints.anchor=GridBagConstraints.LINE_END;
+        add(register,constraints);
+        register.addActionListener(escucha);
+        gamePanel.add(register);
+
+        continueButton = new JButton("Continue");
+        continueButton.addActionListener(escucha);
+
+        yes = new JButton("Yes");
+        yes.addActionListener(escucha);
+
+        no = new JButton("No");
+        no.addActionListener(escucha);
+
+        tempo = new Timer(1000, escucha);
+        timer = new Timer(3000, escucha);
     }
 
     /**
@@ -55,7 +160,13 @@ public class GUI extends JFrame {
     /**
      * inner class that extends an Adapter Class or implements Listeners used by GUI class
      */
-    private class Escucha {
+    private class Escucha implements ActionListener {
 
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(e.getSource()==register){
+
+            }
+        }
     }
 }
