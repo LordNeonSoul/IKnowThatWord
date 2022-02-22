@@ -6,82 +6,34 @@ import java.util.Random;
 public class ModelIKnowThatWord {
     private FileManager fileManager;
     private Dictionary dictionary;
-    private ArrayList<String> registeredUsers = new ArrayList<String>();
-    private ArrayList<String> wordsToRemember = new ArrayList<String>();
-    private ArrayList<String> wordsByGame = new ArrayList<String>();
-    private ArrayList<String> wordsInLevel = new ArrayList<String>();
-    private String userNameGame, userNameInto, word, wordToRemember;
-    private int flag, flag2, hits, wordsLevel,wordsToRememberInGame, level, passedLevels;
-    private boolean isAWordToRemember, plusHit;
+    private ModelUser modelUser;
+    ArrayList<String> wordsToRemember;
+    ArrayList<String> wordsByGame;
+    ArrayList<String> wordsInLevel;
+    private String userNameGame, word, wordToRemember;
+    private int flag, flag2, hits, wordsLevel, level, passedLevels;
+    private double wordsToRememberInGame;
+    private boolean plusHit;
     boolean verifyUser;
 
-    ModelIKnowThatWord(String userNameInto){
-        fileManager = new FileManager();
+    public ModelIKnowThatWord(String userName){
         dictionary = new Dictionary();
-        verifyUser=false;
-        this.userNameGame=userNameInto;
-        if (isUser()){
-            passedLevels= getUserLevels();
-        }else{
-            newUser();
-            verifyUser=true;
-            passedLevels=0;
+        verifyUser = false;
+        userNameGame = userName;
+        modelUser = new ModelUser(userNameGame);
+        if(modelUser.isUser()){
+            passedLevels = modelUser.getUserLevels();
+        } else {
+            modelUser.newUser();
+            verifyUser = true;
+            passedLevels = 0;
         }
         hits=0;
         flag=0;
         flag2=0;
         setActualLevel();
-        if (passedLevels==10)  {
-            level = passedLevels;
-            setWordsOnLevel();
-            setWordsToRememberInGame();
-            wordsByGame=dictionary.getWordsByGame(0);
-            wordsToRemember=dictionary.getWordsToRemember(0);
-            wordsInLevel= new ArrayList<>();
-            setWordsToTheLevel();
-        }
-    }
-
-    private boolean isAWordToRemember(String word){
-        isAWordToRemember = false;
-        for (int i = 0; i < wordsToRemember.size() ; i++) {
-            if (wordsToRemember.get(i).equals(word)){
-                isAWordToRemember=true;
-                break;
-            }
-        }
-        return isAWordToRemember;
-    }
-
-    private int searchUser(){
-        int position=-1;
-        for (int i = 0; i < registeredUsers.size()&&registeredUsers.get(i).length()!=0;i++) {
-            String thisUser = registeredUsers.get(i).substring(0, registeredUsers.get(i).lastIndexOf(":"));
-            if (thisUser.equals(userNameGame)){
-                position=i;
-                break;
-            }
-        }
-        return position;
-    }
-
-    public boolean isUser() {
-        boolean verifyRegister = false;
-        if (searchUser()!=-1){
-            verifyRegister=true;
-        }
-        return verifyRegister;
-    }
-
-    public void newUser() {
-        fileManager.writeUsers(userNameGame+"-"+0);
-    }
-
-    public int setUserLevels(){
-        if(getUserLevels()<10){
-            fileManager.writeLevel(getUserLevels()+1,searchUser());
-        }
-        return getUserLevels();
+        setWordsToTheLevel();
+        setWordsOnLevel();
     }
 
     private void setActualLevel(){
@@ -89,34 +41,13 @@ public class ModelIKnowThatWord {
         if(passedLevels<10) {
             level = passedLevels + 1;
             setWordsOnLevel();
-            setWordsToRememberInGame();
-            word = "";
-            wordsByGame = dictionary.getWordsByGame(wordsLevel);
-            wordsToRemember = dictionary.getWordsToRemember(wordsToRememberInGame);
+            wordsByGame = dictionary.getWordsByGame(wordsLevel/2);
+            wordsToRemember = dictionary.getWordsToRemember(wordsLevel/2);
             wordsInLevel = new ArrayList<>();
             setWordsToTheLevel();
         }
     }
 
-    private void setPassedLevels(){
-        if(hits>=wordsToRememberInGame){
-            passedLevels= setUserLevels();
-            setActualLevel();
-            flag=0;
-            flag2=0;
-        } else {
-            flag=0;
-            flag2=0;
-            hits=0;
-            setWordsOnLevel();
-            setWordsToRememberInGame();
-            word="";
-            wordsByGame=dictionary.getWordsByGame(wordsLevel);
-            wordsToRemember=dictionary.getWordsToRemember(wordsToRememberInGame);
-            wordsInLevel= new ArrayList<>();
-           setWordsToTheLevel();
-        }
-    }
 
     private void setWordsToTheLevel(){
 
@@ -156,18 +87,57 @@ public class ModelIKnowThatWord {
 
     private void setWordsToRememberInGame(){
         switch (level){
-            case 1-> wordsToRememberInGame=14;
-            case 2-> wordsToRememberInGame=28;
-            case 3-> wordsToRememberInGame=38;
-            case 4-> wordsToRememberInGame=48;
-            case 5-> wordsToRememberInGame=56;
-            case 6-> wordsToRememberInGame=68;
-            case 7-> wordsToRememberInGame=90;
-            case 8-> wordsToRememberInGame=108;
-            case 9-> wordsToRememberInGame=133;
-            case 10->wordsToRememberInGame=200;
+            case 1, 2 -> wordsToRememberInGame=0.7;
+            case 3-> wordsToRememberInGame=0.75;
+            case 4, 5 -> wordsToRememberInGame=0.8;
+            case 6-> wordsToRememberInGame=0.85;
+            case 7, 8 -> wordsToRememberInGame=0.90;
+            case 9-> wordsToRememberInGame=0.95;
+            case 10->wordsToRememberInGame=1;
         }
     }
+
+    private void setPassedLevels(){
+        if(hits>=wordsLevel*wordsToRememberInGame){
+            passedLevels= modelUser.setUserLevels();
+            setActualLevel();
+            flag=0;
+            flag2=0;
+        } else {
+            flag=0;
+            flag2=0;
+            hits=0;
+            setWordsOnLevel();
+            word="";
+            wordsByGame=dictionary.getWordsByGame(wordsLevel/2);
+            wordsToRemember=dictionary.getWordsToRemember(wordsLevel/2);
+            wordsInLevel= new ArrayList<>();
+            setWordsToTheLevel();
+        }
+    }
+
+    public String getWord(){
+        if (flag<wordsInLevel.size()){
+            word=wordsInLevel.get(flag);
+            flag++;
+        }else{
+            setPassedLevels();
+            word="";
+        }
+        return word;
+    }
+
+    private boolean isAWordToRemember(String word){
+        boolean isWord= false;
+        for (int i = 0; i < wordsToRemember.size() ; i++) {
+            if (wordsToRemember.get(i).equals(word)){
+                isWord=true;
+                break;
+            }
+        }
+        return isWord;
+    }
+
 
     public void setHits(boolean answer){
         plusHit = isAWordToRemember(word);
@@ -185,20 +155,10 @@ public class ModelIKnowThatWord {
         return wordToRemember;
     }
 
-    public String getWord(){
-        if (flag<wordsInLevel.size()){
-            word=wordsInLevel.get(flag);
-            flag++;
-        }else{
-            setPassedLevels();
-            word="";
-        }
-        return word;
-    }
+
 
     public int getHits(){
-        setWordsToRememberInGame();
-        return wordsToRememberInGame;
+       return hits;
     }
 
     public int getPassedLevels(){
@@ -209,11 +169,13 @@ public class ModelIKnowThatWord {
         return level;
     }
 
-    public int getUserLevels(){
-        registeredUsers = fileManager.usersReader();
-        String user = registeredUsers.get(searchUser());
-        int levels = Integer.parseInt(user.substring(user.lastIndexOf(":")+1));
-        return levels;
+    public int getHitsLevel(){
+        setWordsToRememberInGame();
+        return (int) Math.ceil(wordsLevel*wordsToRememberInGame);
+    }
+
+    public boolean newUser() {
+        return verifyUser;
     }
 
 }

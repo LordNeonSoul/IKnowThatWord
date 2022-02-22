@@ -14,7 +14,7 @@ public class GUI extends JFrame {
 
     private Header headerProject;
     ModelIKnowThatWord modelIKnowThatWord;
-    private JTextField userName;
+    private JTextField userNameField;
     private JButton yes,no, help, exit, continueButton, register;
     private JPanel gamePanel, dataPanel;
     private JTextArea data, level, start, word, time, hits;
@@ -104,15 +104,15 @@ public class GUI extends JFrame {
         constraints.anchor=GridBagConstraints.CENTER;
         add(dataPanel,constraints);
 
-        userName = new JTextField();
-        userName.setPreferredSize(new Dimension(250, 20));
+        userNameField = new JTextField();
+        userNameField.setPreferredSize(new Dimension(250, 20));
         constraints.gridx=1;
         constraints.gridy=3;
         constraints.gridwidth=1;
         constraints.fill=GridBagConstraints.BOTH;
         constraints.anchor=GridBagConstraints.CENTER;
-        add(userName,constraints);
-        gamePanel.add(userName);
+        add(userNameField,constraints);
+        gamePanel.add(userNameField);
 
         start.setText("Into an User or create one");
         start.setBackground(null);
@@ -166,20 +166,28 @@ public class GUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if(e.getSource()==register){
-                if(!userName.getText().equals("")) {
+                String usernameTag = JOptionPane.showInputDialog("Digite su nombre");
+                if (!usernameTag.equals("")) {
                     if(flag==0){
-                        modelIKnowThatWord = new ModelIKnowThatWord(userName.getText());
-                        gamePanel.remove(userName);
-                        gamePanel.remove(register);
-                        if(modelIKnowThatWord.verifyUser){
-                            start.setText("Welcome " + userName.getText() + " to the game I Know that word!");
+                        modelIKnowThatWord = new ModelIKnowThatWord(userNameField.getText());
+                        gamePanel.remove(userNameField);
+                        if (modelIKnowThatWord.verifyUser){
+                            start.setText("Bienvenido "+ userNameField.getText()+
+                                    "\n¡entrenemos tu memoria!");
                         }else{
-                            start.setText("Welcome back " + userName.getText() + " to the game I know that word!\nYou have reached the " + modelIKnowThatWord.getPassedLevels() + " level, let's continue");
+                            start.setText("Bienvenido de nuevo "+ userNameField.getText()+
+                                    "\nHas aprobado el nivel "+ modelIKnowThatWord.getPassedLevels());
+                            dataPanel.repaint();
+                            if (modelIKnowThatWord.getPassedLevels()==0){
+                                start.setText("Bienvenido de nuevo "+ userNameField.getText()+
+                                        "\nno aprobaste el nivel 1");
+                            }
                         }
+                        register.setVisible(false);
+                    }else{
+
                     }
-                    gamePanel.remove(register);
-                    gamePanel.remove(userName);
-                    timer.start();
+
                 }
             }
         }
