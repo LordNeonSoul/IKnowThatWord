@@ -167,29 +167,7 @@ public class GUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             if(e.getSource()==register){
                 String usernameTag = JOptionPane.showInputDialog("Digite su nombre");
-                if (!usernameTag.equals("")) {
-                    if(flag==0){
-                        modelIKnowThatWord = new ModelIKnowThatWord(userNameField.getText());
-                        gamePanel.remove(userNameField);
-                        if (modelIKnowThatWord.verifyUser){
-                            start.setText("Bienvenido "+ userNameField.getText()+
-                                    "\n¡entrenemos tu memoria!");
-                        }else{
-                            start.setText("Bienvenido de nuevo "+ userNameField.getText()+
-                                    "\nHas aprobado el nivel "+ modelIKnowThatWord.getPassedLevels());
-                            dataPanel.repaint();
-                            if (modelIKnowThatWord.getPassedLevels()==0){
-                                start.setText("Bienvenido de nuevo "+ userNameField.getText()+
-                                        "\nno aprobaste el nivel 1");
-                            }
-                        }
-                        register.setVisible(false);
-                    }else{
-
-                    }
-
+                
                 }
             }
         }
-    }
-}
